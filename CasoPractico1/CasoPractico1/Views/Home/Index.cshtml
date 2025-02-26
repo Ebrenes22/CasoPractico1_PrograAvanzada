@@ -1,8 +1,35 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Menú Principal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header text-center">
+                    <h1 class="h3 mb-0">Menú Principal</h1>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a asp-controller="Usuarios" asp-action="Index" class="btn btn-primary btn-lg">
+                            Gestión de Usuarios
+                        </a>
+                        <a asp-controller="Rutas" asp-action="Index" class="btn btn-success btn-lg">
+                            Gestión de Rutas
+                        </a>
+                        <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-warning btn-lg">
+                            Gestión de Vehículos
+                        </a>
+                        <a asp-controller="Boletos" asp-action="Index" class="btn btn-danger btn-lg">
+                            Gestión de Boletos
+                        </a>
+                        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-info btn-lg">
+                            Dashboard Administrador
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

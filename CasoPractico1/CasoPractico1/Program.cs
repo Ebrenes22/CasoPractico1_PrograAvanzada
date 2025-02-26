@@ -1,14 +1,16 @@
 using CasoPractico1.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Registrar DbContext
-builder.Services.AddDbContext<TransporteDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TransporteDb")));
-
-// Add services to the container.
+// Servicio
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<TransporteDbContext>(op =>
+{ 
+    op.UseSqlServer(builder.Configuration.GetConnectionString("TransporteDb"));
+
+});
 
 var app = builder.Build();
 
@@ -30,5 +32,19 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<TransporteDbContext>();
+    if (context.Database.CanConnect())
+    {
+        Console.WriteLine("Conexión exitosa a la base de datos.");
+    }
+    else
+    {
+        Console.WriteLine("No se pudo conectar a la base de datos.");
+    }
+}
+
 
 app.Run();

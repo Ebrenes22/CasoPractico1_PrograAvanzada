@@ -1,4 +1,8 @@
-﻿namespace CasoPractico1.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
+
+namespace CasoPractico1.Models
+
 {
     public class Usuario
     {
@@ -12,7 +16,9 @@
         public string Rol { get; set; }
 
         // Relaciones de navegación
+        [BindNever]
         public ICollection<Ruta> RutasRegistradas { get; set; }
+        [BindNever]
         public ICollection<Boleto> Boletos { get; set; }
     }
 }
