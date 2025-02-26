@@ -1,4 +1,11 @@
+using CasoPractico1.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Registrar DbContext
+builder.Services.AddDbContext<TransporteDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TransporteDb")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

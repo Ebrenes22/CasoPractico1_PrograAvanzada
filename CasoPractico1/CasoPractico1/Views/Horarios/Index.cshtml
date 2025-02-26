@@ -1,0 +1,55 @@
+﻿@model IEnumerable<CasoPractico1.Models.Horario>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ruta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Vehiculo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Hora)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ruta.RutaId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vehiculo.VehiculoId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hora)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.HorarioId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.HorarioId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.HorarioId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>
