@@ -1,4 +1,6 @@
-﻿namespace CasoPractico1.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CasoPractico1.Models
 {
     public class Ruta
     {
@@ -9,10 +11,9 @@
         public string Estado { get; set; }
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
         public int UsuarioRegistroId { get; set; }
+        [ForeignKey("UsuarioRegistroId")]
         public Usuario Usuario { get; set; }
 
-        // Relaciones de navegación
-        public ICollection<Vehiculo> Vehiculos { get; set; }
         public ICollection<Parada> Paradas { get; set; }
         public ICollection<Horario> Horarios { get; set; }
         public ICollection<Boleto> Boletos { get; set; }

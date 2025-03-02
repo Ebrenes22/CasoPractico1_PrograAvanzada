@@ -25,40 +25,33 @@ namespace CasoPractico1.Controllers
             return View(await transporteDbContext.ToListAsync());
         }
 
-        // GET: Vehiculos/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var vehiculo = await _context.Vehiculos
-                .Include(v => v.Ruta)
-                .FirstOrDefaultAsync(m => m.VehiculoId == id);
-            if (vehiculo == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehiculo);
-        }
-
+        
         // GET: Vehiculos/Create
         public IActionResult Create()
         {
-            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId");
+            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "NombreRuta");
             return View();
         }
 
-        // POST: Vehiculos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VehiculoId,Placa,Modelo,Capacidad,Estado,RutaId,FechaRegistro")] Vehiculo vehiculo)
+        public async Task<IActionResult> Create([Bind("Placa,Modelo,Capacidad,Estado,RutaId")] Vehiculo vehiculo)
         {
-            if (ModelState.IsValid)
+
+            vehiculo.FechaRegistro = DateTime.Now;
+            vehiculo.UsuarioRegistroId = 1;
+
+            ModelState.Remove("Boletos");
+            ModelState.Remove("Usuario");
+            ModelState.Remove("Ruta");
+
+            if (VehiculoExists(vehiculo.Placa))
+            {
+                ModelState.AddModelError("Placa", "Ya existe un vehiculo con esa placa");
+                return View(vehiculo);
+            }
+
+                if (ModelState.IsValid)
             {
                 _context.Add(vehiculo);
                 await _context.SaveChangesAsync();
@@ -82,20 +75,23 @@ namespace CasoPractico1.Controllers
                 return NotFound();
             }
             ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId", vehiculo.RutaId);
+            ViewData["estado"] = vehiculo.Estado;
             return View(vehiculo);
         }
 
-        // POST: Vehiculos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VehiculoId,Placa,Modelo,Capacidad,Estado,RutaId,FechaRegistro")] Vehiculo vehiculo)
+        public async Task<IActionResult> Edit(int id, [Bind("VehiculoId,Placa,Modelo,Capacidad,Estado,RutaId,FechaRegistro,UsuarioRegistroId")] Vehiculo vehiculo)
         {
             if (id != vehiculo.VehiculoId)
             {
                 return NotFound();
             }
+
+
+            ModelState.Remove("Boletos");
+            ModelState.Remove("Usuario");
+            ModelState.Remove("Ruta");
 
             if (ModelState.IsValid)
             {
@@ -106,7 +102,7 @@ namespace CasoPractico1.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VehiculoExists(vehiculo.VehiculoId))
+                    if (!VehiculoExists(vehiculo.Placa))
                     {
                         return NotFound();
                     }
@@ -155,9 +151,9 @@ namespace CasoPractico1.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool VehiculoExists(int id)
+        private bool VehiculoExists(string id)
         {
-            return _context.Vehiculos.Any(e => e.VehiculoId == id);
+            return _context.Vehiculos.Any(e => e.Placa == id);
         }
     }
 }

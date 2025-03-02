@@ -1,7 +1,7 @@
 ﻿@model CasoPractico1.Models.Ruta
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -9,48 +9,72 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
+    <title>Crear Ruta</title>
 </head>
 <body>
 
-<h4>Ruta</h4>
+    <h4>Crear Ruta</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="CodigoRuta" class="control-label"></label>
+                <label asp-for="CodigoRuta" class="control-label">Cod. Ruta</label>
                 <input asp-for="CodigoRuta" class="form-control" />
                 <span asp-validation-for="CodigoRuta" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NombreRuta" class="control-label"></label>
+                <label asp-for="NombreRuta" class="control-label">Nombre</label>
                 <input asp-for="NombreRuta" class="form-control" />
                 <span asp-validation-for="NombreRuta" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
+                <label asp-for="Descripcion" class="control-label">Descripción</label>
                 <input asp-for="Descripcion" class="form-control" />
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
+                <label asp-for="Estado" class="control-label">Estado</label>
+                <select asp-for="Estado" class="form-select" >
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                </select>
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
+                <label asp-for="Horarios" class="control-label">Horarios</label>
+                <select class="form-select" multiple asp-for="Horarios">
+                    <option value="06:00:00">06:00:00</option>
+                    <option value="07:00:00">07:00:00</option>
+                    <option value="08:00:00">08:00:00</option>
+                    <option value="09:00:00">09:00:00</option>
+                    <option value="10:00:00">10:00:00</option>
+                    <option value="11:00:00">11:00:00</option>
+                    <option value="12:00:00">12:00:00</option>
+                    <option value="13:00:00">13:00:00</option>
+                    <option value="14:00:00">14:00:00</option>
+                    <option value="15:00:00">15:00:00</option>
+                    <option value="16:00:00">16:00:00</option>
+                    <option value="17:00:00">17:00:00</option>
+                    <option value="18:00:00">18:00:00</option>
+                    <option value="19:00:00">19:00:00</option>
+                    <option value="20:00:00">20:00:00</option>
+                    <option value="21:00:00">21:00:00</option>
+                    <option value="22:00:00">22:00:00</option>
+                    <option value="23:00:00">23:00:00</option>
+                </select>
+                <label asp-for="Paradas" class="control-label">Paradas</label>
+                <select class="form-select" multiple asp-for="Paradas">
+                    <option value="San José">San José - Parque Central</option>
+                    <option value="Alajuela">Alajuela - Parque Juan Santamaría</option>
+                    <option value="Cartago">Cartago - Basílica de los Ángeles</option>
+                    <option value="Heredia">Heredia - Fortín de Heredia</option>
+                    <option value="Guanacaste">Guanacaste - Parque de Liberia</option>
+                    <option value="Puntarenas">Puntarenas - Paseo de los Turistas</option>
+                    <option value="Limón">Limón - Parque Vargas</option>
+                </select>
             <div class="form-group">
-                <label asp-for="FechaRegistro" class="control-label"></label>
-                <input asp-for="FechaRegistro" class="form-control" />
-                <span asp-validation-for="FechaRegistro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UsuarioRegistroId" class="control-label"></label>
-                <input asp-for="UsuarioRegistroId" class="form-control" />
-                <span asp-validation-for="UsuarioRegistroId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="mt-4 btn btn-primary" />
             </div>
         </form>
     </div>

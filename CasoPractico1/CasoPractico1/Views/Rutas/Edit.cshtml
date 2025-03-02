@@ -1,7 +1,41 @@
 ﻿@model CasoPractico1.Models.Ruta
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<string> paradas = new List<string>
+        {
+            "San José",
+            "Alajuela",
+            "Cartago",
+            "Heredia",
+            "Guanacaste",
+            "Puntarenas",
+            "Limón"
+        };
+
+    List<string> horarios = new List<string>
+        {
+            "06:00:00",
+            "07:00:00",
+            "08:00:00",
+            "09:00:00",
+            "10:00:00",
+            "11:00:00",
+            "12:00:00",
+            "13:00:00",
+            "14:00:00",
+            "15:00:00",
+            "16:00:00",
+            "17:00:00",
+            "18:00:00",
+            "19:00:00",
+            "20:00:00",
+            "21:00:00",
+            "22:00:00",
+            "23:00:00"
+        };
+
 }
 
 <!DOCTYPE html>
@@ -9,11 +43,11 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Edit</title>
+    <title>Editar Ruta</title>
 </head>
 <body>
 
-<h4>Ruta</h4>
+    <h4>>Editar Ruta</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -40,18 +74,33 @@
                 <input asp-for="Estado" class="form-control" />
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
+                <label asp-for="Horarios" class="control-label">Horarios</label>
+                <select class="form-select" multiple asp-for="Horarios">
+                    
+                    @foreach(string hor in horarios){
+                        bool isSelected = ViewBag.HorariosSeleccionados.Contains(hor);
+                        <option value="@hor" selected="@(isSelected ? "selected" : null)">@hor</option>
+                    }
+                </select>
+                <label asp-for="Paradas" class="control-label">Paradas</label>
+                <select class="form-select" multiple asp-for="Paradas">
+                    @foreach (string par in paradas)
+                    {
+                       
+                        bool isSelected = ViewBag.ParadasSeleccionadas.Contains(par);
+
+                        <option value="@par" selected="@(isSelected ? "selected" : null)">@par</option>
+                    }
+                </select>
+
+                <div class="form-group">
+                    <input asp-for="FechaRegistro" class="form-control d-none" hidden />
+                </div>
+                <div class="form-group">
+                    <input asp-for="UsuarioRegistroId" class="form-control" hidden type="number" />
+                </div>
             <div class="form-group">
-                <label asp-for="FechaRegistro" class="control-label"></label>
-                <input asp-for="FechaRegistro" class="form-control" />
-                <span asp-validation-for="FechaRegistro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UsuarioRegistroId" class="control-label"></label>
-                <input asp-for="UsuarioRegistroId" class="form-control" />
-                <span asp-validation-for="UsuarioRegistroId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                    <input type="submit" value="Save" class="btn btn-primary"  />
             </div>
         </form>
     </div>

@@ -21,7 +21,7 @@ namespace CasoPractico1.Controllers
         // GET: Rutas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Rutas.ToListAsync());
+            return View(await _context.Rutas.Include(r => r.Horarios).ToListAsync());
         }
 
         // GET: Rutas/Details/5
@@ -48,23 +48,67 @@ namespace CasoPractico1.Controllers
             return View();
         }
 
-        // POST: Rutas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RutaId,CodigoRuta,NombreRuta,Descripcion,Estado,FechaRegistro,UsuarioRegistroId")] Ruta ruta)
+        public async Task<IActionResult> Create([Bind("CodigoRuta,NombreRuta,Descripcion,Estado")] Ruta ruta, [Bind("Horarios")] List<string> Horarios, [Bind("Paradas")] List<string> Paradas)
         {
+            ruta.FechaRegistro = DateTime.Now;
+            ruta.UsuarioRegistroId = 1;
+
+            ModelState.Remove("Boletos");
+            ModelState.Remove("Paradas");
+            ModelState.Remove("Horarios");
+            ModelState.Remove("Vehiculos");
+            ModelState.Remove("Usuario");
+
+            if (RutaExists(ruta.CodigoRuta))
+            {
+                ModelState.AddModelError("CodigoRuta", "El código de ruta ya existe");
+                return View(ruta);
+            }
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(ruta);
                 await _context.SaveChangesAsync();
+                
+
+                var horarios = _context.Horarios.Where(h => h.RutaId == ruta.RutaId);
+                _context.Horarios.RemoveRange(horarios);
+                await _context.SaveChangesAsync();
+
+                foreach(string horario in Horarios)
+                {
+                    Horario horarioObj = new Horario();
+                    horarioObj.RutaId = ruta.RutaId;
+                    horarioObj.Hora = TimeSpan.Parse(horario); 
+                    _context.Horarios.Add(horarioObj);
+                    await _context.SaveChangesAsync();
+                }
+
+
+                var paradas = _context.Paradas.Where(h => h.RutaId == ruta.RutaId);
+                _context.Paradas.RemoveRange(paradas);
+                await _context.SaveChangesAsync();
+
+                foreach (string parada in Paradas)
+                {
+                    Parada paradaObj = new Parada();
+                    paradaObj.RutaId = ruta.RutaId;
+                    paradaObj.NombreParada = parada;
+                    _context.Paradas.Add(paradaObj);
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
+
             }
             return View(ruta);
         }
 
-        // GET: Rutas/Edit/5
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,25 +116,39 @@ namespace CasoPractico1.Controllers
                 return NotFound();
             }
 
-            var ruta = await _context.Rutas.FindAsync(id);
+            var ruta =  _context.Rutas.Include(r => r.Horarios).Include(r => r.Paradas).Where(r => r.RutaId == id).Single();
             if (ruta == null)
             {
                 return NotFound();
             }
+
+            ViewBag.ParadasSeleccionadas = ruta.Paradas.Select(p => p.NombreParada).ToList();
+            ViewBag.HorariosSeleccionados = ruta.Horarios.Select(h => new DateTime().Add(h.Hora).ToString("HH:mm:ss")).ToList();
+
             return View(ruta);
         }
 
-        // POST: Rutas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RutaId,CodigoRuta,NombreRuta,Descripcion,Estado,FechaRegistro,UsuarioRegistroId")] Ruta ruta)
+        public async Task<IActionResult> Edit(int id, [Bind("RutaId,CodigoRuta,NombreRuta,Descripcion,Estado,FechaRegistro,UsuarioRegistroId")] Ruta ruta, [Bind("Horarios")] List<string> Horarios, [Bind("Paradas")] List<string> Paradas)
         {
             if (id != ruta.RutaId)
             {
                 return NotFound();
             }
+
+            if (RutaExists(ruta.CodigoRuta))
+            {
+                ModelState.AddModelError("CodigoRuta", "El código de ruta ya existe");
+                return View(ruta);
+            }
+
+            ModelState.Remove("Boletos");
+            ModelState.Remove("Paradas");
+            ModelState.Remove("Horarios");
+            ModelState.Remove("Vehiculos");
+            ModelState.Remove("Usuario");
 
             if (ModelState.IsValid)
             {
@@ -98,10 +156,37 @@ namespace CasoPractico1.Controllers
                 {
                     _context.Update(ruta);
                     await _context.SaveChangesAsync();
+
+                    var horarios = _context.Horarios.Where(h => h.RutaId == ruta.RutaId);
+                    _context.Horarios.RemoveRange(horarios);
+                    await _context.SaveChangesAsync();
+
+                    foreach (string horario in Horarios)
+                    {
+                        Horario horarioObj = new Horario();
+                        horarioObj.RutaId = ruta.RutaId;
+                        horarioObj.Hora = TimeSpan.Parse(horario);
+                        _context.Horarios.Add(horarioObj);
+                        await _context.SaveChangesAsync();
+                    }
+
+
+                    var paradas = _context.Paradas.Where(h => h.RutaId == ruta.RutaId);
+                    _context.Paradas.RemoveRange(paradas);
+                    await _context.SaveChangesAsync();
+
+                    foreach (string parada in Paradas)
+                    {
+                        Parada paradaObj = new Parada();
+                        paradaObj.RutaId = ruta.RutaId;
+                        paradaObj.NombreParada = parada;
+                        _context.Paradas.Add(paradaObj);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RutaExists(ruta.RutaId))
+                    if (!RutaExists(ruta.CodigoRuta))
                     {
                         return NotFound();
                     }
@@ -115,7 +200,6 @@ namespace CasoPractico1.Controllers
             return View(ruta);
         }
 
-        // GET: Rutas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,7 +217,6 @@ namespace CasoPractico1.Controllers
             return View(ruta);
         }
 
-        // POST: Rutas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -141,6 +224,14 @@ namespace CasoPractico1.Controllers
             var ruta = await _context.Rutas.FindAsync(id);
             if (ruta != null)
             {
+
+                var horarios = _context.Horarios.Where(h => h.RutaId == ruta.RutaId);
+                _context.Horarios.RemoveRange(horarios);
+                await _context.SaveChangesAsync();
+
+                var paradas = _context.Paradas.Where(h => h.RutaId == ruta.RutaId);
+                _context.Paradas.RemoveRange(paradas);
+                await _context.SaveChangesAsync();
                 _context.Rutas.Remove(ruta);
             }
 
@@ -148,9 +239,9 @@ namespace CasoPractico1.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RutaExists(int id)
+        private bool RutaExists(string id)
         {
-            return _context.Rutas.Any(e => e.RutaId == id);
+            return _context.Rutas.Any(e => e.CodigoRuta == id);
         }
     }
 }

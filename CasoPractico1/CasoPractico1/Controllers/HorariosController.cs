@@ -21,7 +21,7 @@ namespace CasoPractico1.Controllers
         // GET: Horarios
         public async Task<IActionResult> Index()
         {
-            var transporteDbContext = _context.Horarios.Include(h => h.Ruta).Include(h => h.Vehiculo);
+            var transporteDbContext = _context.Horarios.Include(h => h.Ruta);
             return View(await transporteDbContext.ToListAsync());
         }
 
@@ -35,7 +35,6 @@ namespace CasoPractico1.Controllers
 
             var horario = await _context.Horarios
                 .Include(h => h.Ruta)
-                .Include(h => h.Vehiculo)
                 .FirstOrDefaultAsync(m => m.HorarioId == id);
             if (horario == null)
             {
@@ -67,7 +66,6 @@ namespace CasoPractico1.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId", horario.RutaId);
-            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "VehiculoId", horario.VehiculoId);
             return View(horario);
         }
 
@@ -85,7 +83,6 @@ namespace CasoPractico1.Controllers
                 return NotFound();
             }
             ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId", horario.RutaId);
-            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "VehiculoId", horario.VehiculoId);
             return View(horario);
         }
 
@@ -122,7 +119,6 @@ namespace CasoPractico1.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId", horario.RutaId);
-            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "VehiculoId", horario.VehiculoId);
             return View(horario);
         }
 
@@ -136,7 +132,6 @@ namespace CasoPractico1.Controllers
 
             var horario = await _context.Horarios
                 .Include(h => h.Ruta)
-                .Include(h => h.Vehiculo)
                 .FirstOrDefaultAsync(m => m.HorarioId == id);
             if (horario == null)
             {
