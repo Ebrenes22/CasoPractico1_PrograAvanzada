@@ -26,10 +26,39 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+
+                    <!-- Sección del usuario en el centro -->
+                    <div class="text-center flex-grow-1">
+                        @if (Context.Session.GetString("NombreCompleto") != null)
+                        {
+                            <span class="navbar-text fw-bold">Bienvenido, @Context.Session.GetString("NombreCompleto") - @Context.Session.GetString("Rol") - </span>
+                        }
+                        else
+                        {
+                            <span class="navbar-text text-muted">No has iniciado sesión</span>
+                        }
+                    </div>
+
+                    <!-- Opciones de usuario a la derecha -->
+                    <ul class="navbar-nav">
+                        @if (Context.Session.GetString("NombreCompleto") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-controller="Home" asp-action="Logout">Cerrar Sesión</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Login">Iniciar Sesión</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -41,6 +70,7 @@
             &copy; 2025 - CasoPractico1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

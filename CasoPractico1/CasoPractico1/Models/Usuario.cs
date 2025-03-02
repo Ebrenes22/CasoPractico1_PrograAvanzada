@@ -15,10 +15,5 @@ namespace CasoPractico1.Models
         public string Contrasena { get; set; }
         public string Rol { get; set; }
 
-        // Relaciones de navegación
-        [BindNever]
-        public ICollection<Ruta> RutasRegistradas { get; set; }
-        [BindNever]
-        public ICollection<Boleto> Boletos { get; set; }
     }
 }

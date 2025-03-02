@@ -1,32 +1,69 @@
-using System.Diagnostics;
-using CasoPractico1.Models;
 using Microsoft.AspNetCore.Mvc;
+using CasoPractico1.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CasoPractico1.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly TransporteDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(TransporteDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("NombreUsuario") == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             return View();
         }
 
-        public IActionResult Privacy()
+
+        // GET: Home/Login
+        public IActionResult Login()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        // POST: Home/Login
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(Usuario model)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+           
+            var usuario = _context.Usuarios
+                .FirstOrDefault(u => u.NombreUsuario == model.NombreUsuario && u.Contrasena == model.Contrasena);
+
+            if (usuario == null)
+            {
+                ViewData["ErrorMessage"] = "Nombre de usuario o contraseña incorrectos";
+                return View(model);
+            }
+
+
+            HttpContext.Session.SetString("NombreUsuario", usuario.NombreUsuario);
+            HttpContext.Session.SetString("NombreCompleto", usuario.NombreCompleto);
+            HttpContext.Session.SetString("Rol", usuario.Rol);
+            HttpContext.Session.SetInt32("UsuarioId", usuario.UsuarioId);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        // Cerrar sesión
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
     }
 }

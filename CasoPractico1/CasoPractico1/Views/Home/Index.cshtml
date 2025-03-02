@@ -3,6 +3,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+
 <div class="container">
     <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="col-md-6">
@@ -12,21 +14,48 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-3">
-                        <a asp-controller="Usuarios" asp-action="Index" class="btn btn-primary btn-lg">
-                            Gestión de Usuarios
-                        </a>
-                        <a asp-controller="Rutas" asp-action="Index" class="btn btn-success btn-lg">
-                            Gestión de Rutas
-                        </a>
-                        <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-warning btn-lg">
-                            Gestión de Vehículos
-                        </a>
-                        <a asp-controller="Boletos" asp-action="Index" class="btn btn-danger btn-lg">
-                            Gestión de Boletos
-                        </a>
-                        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-info btn-lg">
-                            Dashboard Administrador
-                        </a>
+                        @if (Context.Session.GetString("Rol") == "Administrador")
+                        {
+                            <a asp-controller="Usuarios" asp-action="Index" class="btn btn-primary btn-lg">
+                                Gestión de Usuarios
+                            </a>
+                            <a asp-controller="Rutas" asp-action="Index" class="btn btn-success btn-lg">
+                                Gestión de Rutas
+                            </a>
+                            <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-warning btn-lg">
+                                Gestión de Vehículos
+                            </a>
+                            <a asp-controller="Boletos" asp-action="Index" class="btn btn-danger btn-lg">
+                                Gestión de Boletos
+                            </a>
+                            <a asp-controller="Dashboard" asp-action="Index" class="btn btn-info btn-lg">
+                                Dashboard Administrador
+                            </a>
+                        }
+                        else if (Context.Session.GetString("Rol") == "Conductor")
+                        {
+                            <a asp-controller="Rutas" asp-action="Index" class="btn btn-success btn-lg">
+                                Gestión de Rutas Asignadas
+                            </a>
+                            <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-warning btn-lg">
+                                Gestión de Vehículos
+                            </a>
+                        }
+                        else if (Context.Session.GetString("Rol") == "Usuario")
+                        {
+                            <a asp-controller="Rutas" asp-action="Consultar" class="btn btn-success btn-lg">
+                                Consultar Rutas y Horarios
+                            </a>
+                            <a asp-controller="Boletos" asp-action="Comprar" class="btn btn-danger btn-lg">
+                                Comprar Boletos
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning text-center">
+                                No tienes acceso a ninguna función.
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

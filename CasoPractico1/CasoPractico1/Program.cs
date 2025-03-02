@@ -4,9 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Servicio
+builder.Services.AddSession(); // Habilitar sesiones
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<TransporteDbContext>(op =>
+
 { 
     op.UseSqlServer(builder.Configuration.GetConnectionString("TransporteDb"));
 
@@ -27,11 +31,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession(); 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
 using (var scope = app.Services.CreateScope())
 {
