@@ -54,7 +54,7 @@ namespace CasoPractico1.Controllers
         public async Task<IActionResult> Create([Bind("CodigoRuta,NombreRuta,Descripcion,Estado")] Ruta ruta, [Bind("Horarios")] List<string> Horarios, [Bind("Paradas")] List<string> Paradas)
         {
             ruta.FechaRegistro = DateTime.Now;
-            ruta.UsuarioRegistroId = 1;
+            ruta.UsuarioRegistroId = 3;
 
             ModelState.Remove("Boletos");
             ModelState.Remove("Paradas");
