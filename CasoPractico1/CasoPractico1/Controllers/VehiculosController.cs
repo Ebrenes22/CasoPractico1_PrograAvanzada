@@ -39,7 +39,7 @@ namespace CasoPractico1.Controllers
         {
 
             vehiculo.FechaRegistro = DateTime.Now;
-            vehiculo.UsuarioRegistroId = 1;
+            vehiculo.UsuarioRegistroId = (int)HttpContext.Session.GetInt32("UsuarioId"); 
 
             ModelState.Remove("Boletos");
             ModelState.Remove("Usuario");

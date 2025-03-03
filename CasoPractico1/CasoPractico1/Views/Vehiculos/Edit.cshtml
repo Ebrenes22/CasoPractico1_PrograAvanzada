@@ -20,11 +20,8 @@
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="VehiculoId" />
-                <div class="form-group">
-                    <label asp-for="Placa" class="control-label"></label>
-                    <input asp-for="Placa" class="form-control" />
-                    <span asp-validation-for="Placa" class="text-danger"></span>
-                </div>
+                    <input asp-for="Placa" class="form-control" hidden/>
+
                 <div class="form-group">
                     <label asp-for="Modelo" class="control-label"></label>
                     <input asp-for="Modelo" class="form-control" />

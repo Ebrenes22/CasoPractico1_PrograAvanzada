@@ -54,7 +54,7 @@ namespace CasoPractico1.Controllers
         public async Task<IActionResult> Create([Bind("CodigoRuta,NombreRuta,Descripcion,Estado")] Ruta ruta, [Bind("Horarios")] List<string> Horarios, [Bind("Paradas")] List<string> Paradas)
         {
             ruta.FechaRegistro = DateTime.Now;
-            ruta.UsuarioRegistroId = 3;
+            ruta.UsuarioRegistroId = (int)HttpContext.Session.GetInt32("UsuarioId"); 
 
             ModelState.Remove("Boletos");
             ModelState.Remove("Paradas");
@@ -138,11 +138,6 @@ namespace CasoPractico1.Controllers
                 return NotFound();
             }
 
-            if (RutaExists(ruta.CodigoRuta))
-            {
-                ModelState.AddModelError("CodigoRuta", "El código de ruta ya existe");
-                return View(ruta);
-            }
 
             ModelState.Remove("Boletos");
             ModelState.Remove("Paradas");

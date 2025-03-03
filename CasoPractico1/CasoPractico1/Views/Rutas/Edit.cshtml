@@ -48,36 +48,38 @@
 <body>
 
     <h4>>Editar Ruta</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="RutaId" />
-            <div class="form-group">
-                <label asp-for="CodigoRuta" class="control-label"></label>
-                <input asp-for="CodigoRuta" class="form-control" />
-                <span asp-validation-for="CodigoRuta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NombreRuta" class="control-label"></label>
-                <input asp-for="NombreRuta" class="form-control" />
-                <span asp-validation-for="NombreRuta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="RutaId" />
+
+                <input asp-for="CodigoRuta" class="form-control" hidden />
+
+                <div class="form-group">
+                    <label asp-for="NombreRuta" class="control-label"></label>
+                    <input asp-for="NombreRuta" class="form-control" />
+                    <span asp-validation-for="NombreRuta" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"></label>
+                    <input asp-for="Descripcion" class="form-control" />
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Estado" class="control-label">Estado</label>
+                    <select asp-for="Estado" class="form-select">
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                    <span asp-validation-for="Estado" class="text-danger"></span>
+                </div>
                 <label asp-for="Horarios" class="control-label">Horarios</label>
                 <select class="form-select" multiple asp-for="Horarios">
-                    
-                    @foreach(string hor in horarios){
+
+                    @foreach (string hor in horarios)
+                    {
                         bool isSelected = ViewBag.HorariosSeleccionados.Contains(hor);
                         <option value="@hor" selected="@(isSelected ? "selected" : null)">@hor</option>
                     }
@@ -86,7 +88,7 @@
                 <select class="form-select" multiple asp-for="Paradas">
                     @foreach (string par in paradas)
                     {
-                       
+
                         bool isSelected = ViewBag.ParadasSeleccionadas.Contains(par);
 
                         <option value="@par" selected="@(isSelected ? "selected" : null)">@par</option>
@@ -99,19 +101,21 @@
                 <div class="form-group">
                     <input asp-for="UsuarioRegistroId" class="form-control" hidden type="number" />
                 </div>
-            <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary"  />
-            </div>
-        </form>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
 </body>
 </html>
