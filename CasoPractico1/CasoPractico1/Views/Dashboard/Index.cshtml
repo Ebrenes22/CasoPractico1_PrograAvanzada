@@ -1,0 +1,44 @@
+﻿@model dynamic
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+
+<h2>Dashboard Admin</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Rutas activas</h5>
+                    <p class="card-text">@Model.RutasActivas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Vehículos en buen estado:</h5>
+                    <p class="card-text">@Model.VehiculosEnBuenEstado</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Boletos vendidos en el mes</h5>
+                    <p class="card-text">@Model.BoletosVendidosMes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

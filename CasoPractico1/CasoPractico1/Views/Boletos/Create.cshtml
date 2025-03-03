@@ -1,7 +1,7 @@
 ﻿@model CasoPractico1.Models.Boleto
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -9,20 +9,16 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
+    <title>Ingresar boleto</title>
 </head>
 <body>
 
-<h4>Boleto</h4>
+    <h4>Ingresar boleto</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UsuarioId" class="control-label"></label>
-                <select asp-for="UsuarioId" class ="form-control" asp-items="ViewBag.UsuarioId"></select>
-            </div>
             <div class="form-group">
                 <label asp-for="HorarioId" class="control-label"></label>
                 <select asp-for="HorarioId" class ="form-control" asp-items="ViewBag.HorarioId"></select>
@@ -36,19 +32,14 @@
                 <select asp-for="RutaId" class ="form-control" asp-items="ViewBag.RutaId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="FechaCompra" class="control-label"></label>
-                <input asp-for="FechaCompra" class="form-control" />
-                <span asp-validation-for="FechaCompra" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Comprar"  class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver</a>
 </div>
 
 @section Scripts {

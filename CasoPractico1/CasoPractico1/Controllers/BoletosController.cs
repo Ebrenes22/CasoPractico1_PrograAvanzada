@@ -50,34 +50,60 @@ namespace CasoPractico1.Controllers
         // GET: Boletoes/Create
         public IActionResult Create()
         {
-            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "HorarioId");
-            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId");
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId");
-            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "VehiculoId");
+            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "Hora");
+            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "NombreRuta");
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "NombreUsuario");
+            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "Placa");
             return View();
         }
 
         // POST: Boletos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BoletoId,UsuarioId,HorarioId,VehiculoId,RutaId,FechaCompra")] Boleto boleto)
+        public async Task<IActionResult> Create([Bind("BoletoId,UsuarioId,HorarioId,VehiculoId,RutaId")] Boleto boleto)
         {
+            boleto.FechaCompra = DateTime.Now;
+            boleto.UsuarioId = HttpContext.Session.GetInt32("UsuarioId").Value;
+
+            ModelState.Remove("Usuario");
+            ModelState.Remove("Horario");
+            ModelState.Remove("Vehiculo");
+            ModelState.Remove("Ruta");
+
+            var vehiculo = await _context.Vehiculos.FirstOrDefaultAsync(v => v.VehiculoId == boleto.VehiculoId);
+            if (vehiculo == null)
+            {
+                ModelState.AddModelError("VehiculoId", "El vehículo seleccionado no existe.");
+                return View(boleto);
+            }
+
+            int boletosVendidos = await _context.Boletos
+                .CountAsync(b => b.HorarioId == boleto.HorarioId && b.VehiculoId == boleto.VehiculoId);
+
+            if (boletosVendidos >= vehiculo.Capacidad)
+            {
+                ModelState.AddModelError("", "No hay asientos disponibles para este horario y vehículo.");
+                return View(boleto);
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(boleto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "HorarioId", boleto.HorarioId);
-            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId", boleto.RutaId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", boleto.UsuarioId);
-            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "VehiculoId", boleto.VehiculoId);
+
+            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "Hora", boleto.HorarioId);
+            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "NombreRuta", boleto.RutaId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "NombreUsuario", boleto.UsuarioId);
+            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "Placa", boleto.VehiculoId);
+
             return View(boleto);
         }
 
+
         // GET: Boletos/Edit/5
+        // GET: Boletoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,24 +116,36 @@ namespace CasoPractico1.Controllers
             {
                 return NotFound();
             }
-            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "HorarioId", boleto.HorarioId);
-            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId", boleto.RutaId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", boleto.UsuarioId);
-            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "VehiculoId", boleto.VehiculoId);
+            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "Hora", boleto.HorarioId);
+            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "NombreRuta", boleto.RutaId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "NombreUsuario", boleto.UsuarioId);
+            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "Placa", boleto.VehiculoId);
             return View(boleto);
         }
 
         // POST: Boletoes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BoletoId,UsuarioId,HorarioId,VehiculoId,RutaId,FechaCompra")] Boleto boleto)
+        public async Task<IActionResult> Edit(int id, [Bind("BoletoId,UsuarioId,HorarioId,VehiculoId,RutaId")] Boleto boleto)
         {
             if (id != boleto.BoletoId)
             {
                 return NotFound();
             }
+
+            var boletoExistente = await _context.Boletos.AsNoTracking().FirstOrDefaultAsync(b => b.BoletoId == id);
+            if (boletoExistente == null)
+            {
+                return NotFound();
+            }
+
+            // Restaurar el valor de FechaCompra
+            boleto.FechaCompra = boletoExistente.FechaCompra;
+
+            ModelState.Remove("Usuario");
+            ModelState.Remove("Horario");
+            ModelState.Remove("Vehiculo");
+            ModelState.Remove("Ruta");
 
             if (ModelState.IsValid)
             {
@@ -129,12 +167,15 @@ namespace CasoPractico1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "HorarioId", boleto.HorarioId);
-            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "RutaId", boleto.RutaId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "UsuarioId", boleto.UsuarioId);
-            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "VehiculoId", boleto.VehiculoId);
+
+            ViewData["HorarioId"] = new SelectList(_context.Horarios, "HorarioId", "Hora", boleto.HorarioId);
+            ViewData["RutaId"] = new SelectList(_context.Rutas, "RutaId", "NombreRuta", boleto.RutaId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "NombreUsuario", boleto.UsuarioId);
+            ViewData["VehiculoId"] = new SelectList(_context.Vehiculos, "VehiculoId", "Placa", boleto.VehiculoId);
+
             return View(boleto);
         }
+
 
         // GET: Boletoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -167,9 +208,8 @@ namespace CasoPractico1.Controllers
             if (boleto != null)
             {
                 _context.Boletos.Remove(boleto);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -177,5 +217,33 @@ namespace CasoPractico1.Controllers
         {
             return _context.Boletos.Any(e => e.BoletoId == id);
         }
+
+        public async Task<IActionResult> Resumen()
+        {
+            // rutas activas
+            int rutasActivas = await _context.Rutas.CountAsync(r => r.Estado == "Activo");
+            Console.WriteLine("total rutas activas: " + rutasActivas);
+
+            // vehiculos en estado bueno
+            int vehiculosEnBuenEstado = await _context.Vehiculos.CountAsync(v => v.Estado == "Bueno");
+            Console.WriteLine("total vehiculos en buen estado: " + vehiculosEnBuenEstado);
+
+            // numero total de boletos vendidos
+            DateTime primerDiaDelMes = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            int boletosVendidosMes = await _context.Boletos
+                .CountAsync(b => b.FechaCompra >= primerDiaDelMes);
+            Console.WriteLine("total boletos del mes: " + boletosVendidosMes);
+
+
+            var resumen = new
+            {
+                RutasActivas = rutasActivas,
+                VehiculosEnBuenEstado = vehiculosEnBuenEstado,
+                BoletosVendidosMes = boletosVendidosMes
+            };
+
+            return View(resumen);
+        }
+
     }
 }
