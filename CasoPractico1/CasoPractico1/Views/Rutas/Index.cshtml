@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<CasoPractico1.Models.Ruta>
-
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+  
 }
 
 <!DOCTYPE html>
@@ -12,46 +12,44 @@
     <title>Index</title>
 </head>
 <body>
-    <p>
-        <a asp-action="Create"><button class="btn btn-success">Crear Nueva Ruta</button> </a>
-    </p>
+    @if (Context.Session.GetString("Rol") != "Usuario")
+    {
+        <p>
+            <a asp-action="Create"><button class="btn btn-success">Crear Nueva Ruta</button></a>
+        </p>
+    }
+
     <table class="table">
         <thead>
             <tr>
-
-                <th>
-                    Nombre
-                </th>
-                <th>
-                    Estado
-                </th>
-                <th>
-                    Horarios
-                </th>
-                <th>Acciones</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Horarios</th>
+                @if (Context.Session.GetString("Rol") != "Usuario")
+                {
+                    <th>Acciones</th>
+                }
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NombreRuta)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Estado)
-                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.NombreRuta)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Estado)</td>
                     <td>
                         @foreach (var horario in item.Horarios)
                         {
                             <p>@(new DateTime().Add(horario.Hora).ToString("HH:mm"))</p>
                         }
                     </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.RutaId"><button class="btn btn-primary">Editar</button></a> 
-                        <a asp-action="Delete" asp-route-id="@item.RutaId"><button class="btn btn-danger">Eliminar</button></a>
-                    </td>
+                    @if (Context.Session.GetString("Rol") != "Usuario")
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.RutaId"><button class="btn btn-primary">Editar</button></a>
+                            <a asp-action="Delete" asp-route-id="@item.RutaId"><button class="btn btn-danger">Eliminar</button></a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
